@@ -1,0 +1,217 @@
+#include <iostream>
+using namespace std;
+class node{
+    public:
+    int data;
+    node *left;
+    node *right;
+    node *parent;
+        node()      
+        {
+            data=0;
+            left=NULL;
+            right=NULL;
+            parent=NULL;
+        }
+};
+class binary{
+    public:
+    node *root;
+    node* search(int x);
+    void display(node *temp);
+    void insert(int x);
+    void deletex(int x);
+        binary()
+            {
+                root=NULL;
+            }
+};
+    void binary::insert(int x)
+        {   
+            node *current;      
+            node *parent;
+            node *temp=new node;    //creating new node.
+            temp->data=x;           //assigning values to the data part of node.
+            temp->right=NULL;       
+            temp->left=NULL;
+            temp->parent=NULL;
+            if(root==NULL)          //if root is empty.
+                {
+                    root=temp;
+                }
+            else
+                {
+                    current=root;   
+                    parent=NULL;
+                    while(2)        //traversing to the point after which the root will be added.
+                    {
+                        parent=current;
+                        if(x>parent->data)
+                            {
+                                current=current->right;
+                            if(current==NULL)
+                                {   
+                                    temp->parent=parent;
+                                    parent->right=temp;
+                                    return;
+                                }
+                            }
+                        else
+                            {
+                                current=current->left;
+                                if(current==NULL)
+                                    {   
+                                        temp->parent=parent;
+                                        parent->left=temp;
+                                        return;
+                                    }
+                            }
+                    }
+                }
+        }
+node* binary::search(int x)
+    {
+        node *slider=root;
+        if(root==NULL)
+            cout<<"Tree is empty"<<endl;
+        else
+        {
+            while(slider!=NULL)             //if it's not present, then it will reach null.
+            {       
+                if(slider->data==x)   
+                    return slider;          //if element is found a pointer is returned.
+                else if(slider->data>x)     //getting to the node which contains the required value.
+                    slider=slider->left;    
+                else
+                    slider=slider->right;
+            }
+        }
+        if(slider==NULL)                    //if node is not present.
+            {
+                cout<<"It's not present in the tree"<<endl;
+                return 0;
+            }
+    }
+void binary::display(node *root)        //printing in pre-order.
+    {                       
+    if(root==NULL)//if tree is empty.
+        return;     
+    display(root->left);
+    cout<<root->data<<" ";
+    display(root->right);
+    }
+void binary::deletex(int x)
+    {
+    node *slider=search(x);
+    if(slider==NULL)    //if root is empty.
+        return;
+else        //here i've considered everal cases of the position of the node to be deleted.
+{
+    if((slider->right==NULL) && (slider->left==NULL))   //if it is a leaf node.
+        {
+            if((slider->parent)->data>slider->data)
+                {
+                (slider->parent)->left=NULL;
+                slider->parent=NULL;
+                }
+            else
+                {
+                (slider->parent)->right=NULL;
+                slider->parent=NULL;
+                }
+        }
+    else if ((slider->right==NULL) && (slider->left!=NULL))//if it has  only left child.
+        {
+            slider->data=(slider->left)->data;
+            (slider->left)->parent=slider->parent;
+            (slider->parent)->left=slider->left;
+            slider->parent=NULL;
+               slider->left=NULL;
+        }
+    else if ((slider->right!=NULL) && (slider->left==NULL))//if it has onlyright child.
+        {
+            slider->data=(slider->right)->data;
+            (slider->right)->parent=slider->parent;
+            (slider->parent)->right=slider->right;
+            slider->parent=NULL;
+            slider->right=NULL;
+        }
+    else//if it has both the child.
+        {
+        node *temp=slider->left;
+        while(temp->right!=NULL)
+            {
+            temp=temp->right;
+            }
+        if(temp->left!=NULL)
+            {
+            int hold=temp->data;
+            deletex(temp->data);
+            slider->data=hold;
+            }
+        else
+            {
+            slider->data=temp->data;
+            }
+        }
+    }
+}    
+ int main()
+        {
+            binary b;       
+            b.insert(6);
+            b.insert(7);
+            b.insert(3);
+            b.insert(2);
+            b.insert(67);
+            b.insert(8);
+            b.insert(54);
+            b.insert(4);
+            b.insert(10);
+            b.insert(70);
+            b.insert(60);
+            b.insert(11);
+            b.insert(53);
+            b.insert(52);
+            b.insert(65);
+            b.insert(1);
+            b.insert(9);
+            cout<<"The preorder is"<<endl;
+            b.display(b.root);
+            char ch='y';
+            int element;
+            int cho;
+            while(ch!='n')
+                {
+                    cout<<"If you want to continue, press any character otherwise press n"<<endl;
+                    cin>>ch;
+                    cout<<"Your choice,1:Insert,2:Delete,3:Search,enter something"<<endl;
+                    cin>>cho;
+                    if(cho==1)
+                        {   
+                            cin>>element;
+                            b.insert(element);
+                            b.display(b.root);
+                            cout<<endl;
+                        }
+                    else if(cho==2)
+                        {
+                            cin>>element;
+                            b.deletex(element);
+                            b.display(b.root);
+                            cout<<endl;
+                        }
+                    else if(cho==3)
+                        {
+                            cin>>element;
+                            node *slider=b.search(element);
+                            if(slider==NULL)
+                                cout<<"It's not present"<<endl;
+                            else
+                                cout<<"Et voilla, it's present"<<endl;
+                        }
+                    else
+                        cout<<"Wrong choice,try again"<<endl;
+                }
+          return 0;  
+        }       
